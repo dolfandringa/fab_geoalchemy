@@ -1,9 +1,9 @@
 from wtforms.fields import Field
-from wtforms import widgets
+from .widgets import LatLonWidget
 
 
-class LocationField(Field):
-    widget = widgets.TextInput()
+class PointField(Field):
+    widget = LatLonWidget()
 
     def __init__(self, *args, **kwargs):
-        super(Field, self).__init__(*args, **kwargs)
+        super(PointField, self).__init__(*args, **kwargs)

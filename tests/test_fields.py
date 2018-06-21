@@ -2,11 +2,11 @@ from unittest import TestCase
 from flask_appbuilder import SQLA, AppBuilder
 from flask import Flask
 from flask_appbuilder import Model
-from flask_appbuilder import ModelView
-from flask_appbuilder.models.sqla.interface import SQLAInterface
+from fab_geoalchemy.views import GeoModelView
+from fab_geoalchemy.interface import GeoSQLAInterface
 from sqlalchemy import Column, Integer, String
 from geoalchemy2 import Geometry
-from fab_geoalchemy import LocationField
+from fab_geoalchemy import PointField, LatLonWidget
 
 
 cfg = {'SQLALCHEMY_DATABASE_URI': 'postgresql:///test',
@@ -32,8 +32,8 @@ class Observation(Model):
             return 'Person Type %s' % self.id
 
 
-class ObservationView(ModelView):
-    datamodel = SQLAInterface(Observation)
+class ObservationView(GeoModelView):
+    datamodel = GeoSQLAInterface(Observation)
     add_columns = ['name', 'location']
 
 
@@ -55,7 +55,8 @@ class TestFields(TestCase):
     def testGeoalchemyField(self):
         form = ObservationView().add_form()
         self.assertTrue(hasattr(form, 'location'))
-        self.assertIsInstance(form.location, LocationField)
+        self.assertIsInstance(form.location, PointField)
+        self.assertIsInstance(form.location.widget, LatLonWidget)
 
     def tearDown(self):
         db.drop_all()
