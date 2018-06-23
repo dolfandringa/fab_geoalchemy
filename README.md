@@ -6,7 +6,7 @@ The goal is to add a leaflet widget and add support for line and polygon as well
 
 ## Installation
 
-Download the code and execute `pip install` in the source folder.
+Run `pip install fab-geoalchemy`.
 
 ## Usage
 You can find examples in the unittests in the tests folder.
