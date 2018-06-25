@@ -1,12 +1,13 @@
 import logging
 from unittest import TestCase
-from flask_appbuilder import SQLA, AppBuilder
+from flask_appbuilder import AppBuilder
 from flask import Flask
-from flask_appbuilder import Model
 from sqlalchemy import Column, Integer, String
 from geoalchemy2 import Geometry
 from geoalchemy2.elements import WKBElement
 from werkzeug.datastructures import MultiDict
+from sqlalchemy import MetaData, create_engine
+from flask_sqlalchemy import SQLAlchemy
 
 codelog = logging.getLogger('fab_geoalchemy')
 codelog.setLevel(logging.DEBUG)
@@ -22,11 +23,15 @@ cfg = {'SQLALCHEMY_DATABASE_URI': 'postgresql:///test',
 
 app = Flask('wtforms_jsonschema2_testing')
 app.config.update(cfg)
-db = SQLA(app)
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+metadata = MetaData(bind=engine)
+db = SQLAlchemy(app, metadata=metadata)
+db.session.commit()
+
 appbuilder = AppBuilder(app, db.session)
 
 
-class Observation(Model):
+class Observation(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     location = Column(Geometry(geometry_type='POINT', srid=4326))
@@ -67,9 +72,13 @@ class TestFields(TestCase):
         self.assertTrue(hasattr(form, 'location'))
         self.assertIsInstance(form.location, PointField)
         self.assertIsInstance(form.location.widget, LatLonWidget)
-        correct_html = 'Latitude: <input type="text" name="location_lat">' +\
-            'Longitude: <input type="text" name="location_lon">'
-        self.assertEqual(form.location(), correct_html)
+        correct_html = 'Latitude: <input type="text" id="location_lat" ' +\
+            'name="location_lat"> Longitude: <input type="text" ' +\
+            'id="location_lon" name="location_lon">'
+        print(correct_html)
+        widget = form.location()
+        print(widget)
+        self.assertEqual(widget, correct_html)
 
     def testDataProcessing(self):
         form = ObservationView().add_form()
@@ -96,5 +105,37 @@ class TestFields(TestCase):
         print("Finished checking intersection")
         db.session.commit()
 
+    def testFormRefresh(self):
+        print("Starting testFormRefresh")
+        row = Observation(name='test',
+                          location='SRID=4326;POINT(5.98193 52.34812)')
+        db.session.add(row)
+        db.session.commit()
+        form = ObservationView().edit_form()
+        db.session.commit()
+        print("Got for {} with attributes {}".format(form, dir(form)))
+        print("Getting new row")
+        row = db.session.query(Observation).get(row.id)
+        db.session.commit()
+        print("Refreshing form")
+        form = form.refresh(obj=row)
+        print('Edit form: {}'.format(dir(form)))
+        correct_html = 'Latitude: <input type="text" id="location_lat" ' +\
+            'name="location_lat" value="52.34812"> ' +\
+            'Longitude: <input type="text" id="location_lon" ' +\
+            'name="location_lon" value="5.98193">'
+        widget = form.location()
+        print(widget)
+        print(correct_html)
+        self.assertEqual(widget, correct_html)
+        db.session.commit()
+        print("Finished testFormRefresh")
+
     def tearDown(self):
+        print("Starting drop_all")
+        try:
+            db.session.commit()
+        except:
+            pass
         db.drop_all()
+        print("Finished")

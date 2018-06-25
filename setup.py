@@ -24,7 +24,7 @@ setup(
     author="Dolf Andringa",
     author_email="dolfandringa@gmail.com",
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['psycopg2', 'sqlalchemy', 'flask_appbuilder',
+    install_requires=['shapely','psycopg2', 'sqlalchemy', 'flask_appbuilder',
                       'geoalchemy2'],
     setup_requires=['pytest-runner', 'm2r'],
     tests_require=extras['test'],

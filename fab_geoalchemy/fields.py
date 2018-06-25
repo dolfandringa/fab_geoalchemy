@@ -2,6 +2,8 @@ from wtforms.fields import Field
 from wtforms.utils import unset_value
 from .widgets import LatLonWidget
 import logging
+from geoalchemy2.elements import WKBElement
+from shapely import wkb
 
 log = logging.getLogger(__name__)
 
@@ -24,19 +26,26 @@ class PointField(GeometryField):
             lat=lat, lon=lon, point=point))
         return point
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=unset_value, obj=None):
         latname = self.name+'_lat'
         lonname = self.name+'_lon'
         self.process_errors = []
-        log.debug("Processing field with data: {} and formdata: {}".format(
-            data, formdata))
+        log.debug("Processing field {} with data: {}, obj: {} and formdata: {}"
+                  .format(self.name, data, obj, formdata))
         if data is unset_value:
             try:
                 data = self.default()
             except TypeError:
                 data = self.default
-        else:
-            if lonname in data and latname in data:
+        elif data is not None:
+            log.debug("Got data {} of type {}".format(data, data.__class__))
+            log.debug("and keys: {}".format(data.keys()))
+            if isinstance(data, WKBElement):
+                geom = wkb.loads(bytes(data.data))
+                data = {}
+                data[lonname] = geom.x
+                data[latname] = geom.y
+            elif lonname in data and latname in data:
                 data[self.name] = self._getpoint(data[latname], data[lonname])
 
         self.object_data = data
@@ -63,3 +72,4 @@ class PointField(GeometryField):
                 self.data = filter(self.data)
         except ValueError as e:
             self.process_errors.append(e.args[0])
+        log.debug("Finished with object_data: {}".format(self.object_data))
