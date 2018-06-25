@@ -45,8 +45,8 @@ class PointField(GeometryField):
                 data = {}
                 data[lonname] = geom.x
                 data[latname] = geom.y
-            elif lonname in data and latname in data:
-                data[self.name] = self._getpoint(data[latname], data[lonname])
+            #elif lonname in data and latname in data:
+            #    data[self.name] = self._getpoint(data[latname], data[lonname])
 
         self.object_data = data
 

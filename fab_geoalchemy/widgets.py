@@ -2,6 +2,7 @@ from wtforms.widgets import Input
 from markupsafe import Markup
 import logging
 from copy import deepcopy
+from wtforms.utils import unset_value
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +18,10 @@ class LatLonWidget(Input):
         latkwargs = deepcopy(kwargs)
         lonkwargs["id"] = lonname
         latkwargs["id"] = latname
-        if "value" not in kwargs and field.data is not None:
+        log.debug("Field.data: {}".format(field.data))
+        log.debug("kwargs: {}".format(kwargs))
+        if "value" not in kwargs and field.data is not None \
+                and field.data != unset_value:
             lonkwargs["value"] = field.data[lonname]
             latkwargs["value"] = field.data[latname]
         if "required" not in kwargs and "required" in getattr(field,
