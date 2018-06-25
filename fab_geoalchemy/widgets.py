@@ -20,10 +20,21 @@ class LatLonWidget(Input):
         latkwargs["id"] = latname
         log.debug("Field.data: {}".format(field.data))
         log.debug("kwargs: {}".format(kwargs))
-        if "value" not in kwargs and field.data is not None \
-                and field.data != unset_value:
-            lonkwargs["value"] = field.data[lonname]
-            latkwargs["value"] = field.data[latname]
+        if "value" not in kwargs:
+            if isinstance(field.data, str):
+                lon = field.lon
+                lat = field.lat
+            elif isinstance(field.data, dict) \
+                    and lonname in field.data and latname in field.data:
+                lon = field.data[lonname]
+                lat = field.data[latname]
+            else:
+                lon = None
+                lat = None
+            if lon is not None:
+                lonkwargs["value"] = lon
+            if lat is not None:
+                latkwargs["value"] = lat
         if "required" not in kwargs and "required" in getattr(field,
                                                               "flags", []):
             kwargs["required"] = True

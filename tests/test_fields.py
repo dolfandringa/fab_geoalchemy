@@ -104,6 +104,14 @@ class TestFields(TestCase):
         self.assertTrue(db.session.scalar(row.location.ST_Intersects(NL)))
         print("Finished checking intersection")
         db.session.commit()
+        widget = form.location()
+        correct_html = 'Latitude: <input type="text" id="location_lat" ' +\
+            'name="location_lat" value="52.34812"> ' +\
+            'Longitude: <input type="text" id="location_lon" ' +\
+            'name="location_lon" value="5.98193">'
+        print(widget)
+        print(correct_html)
+        self.assertEqual(widget, correct_html)
 
     def testFormRefresh(self):
         print("Starting testFormRefresh")

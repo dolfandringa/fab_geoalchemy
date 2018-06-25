@@ -17,6 +17,8 @@ class PointField(GeometryField):
 
     def __init__(self, *args, srid=4326, **kwargs):
         self.srid = srid
+        self.lon = None
+        self.lat = None
         super(PointField, self).__init__(*args, **kwargs)
 
     def _getpoint(self, lat, lon):
@@ -45,8 +47,12 @@ class PointField(GeometryField):
                 data = {}
                 data[lonname] = geom.x
                 data[latname] = geom.y
-            #elif lonname in data and latname in data:
-            #    data[self.name] = self._getpoint(data[latname], data[lonname])
+                self.lon = geom.x
+                self.lat = geom.y
+            elif lonname in data and latname in data:
+                self.lon = data[lonname]
+                self.lat = data[latname]
+                data[self.name] = self._getpoint(data[latname], data[lonname])
 
         self.object_data = data
 
@@ -57,6 +63,8 @@ class PointField(GeometryField):
 
         if formdata is not None:
             if lonname in formdata and latname in formdata:
+                self.lon = formdata.get(lonname)
+                self.lat = formdata.get(latname)
                 self.raw_data = [self._getpoint(formdata.get(latname),
                                                 formdata.get(lonname))]
             else:
