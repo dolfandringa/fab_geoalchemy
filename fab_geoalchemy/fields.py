@@ -15,10 +15,11 @@ class GeometryField(Field):
 class PointField(GeometryField):
     widget = LatLonWidget()
 
-    def __init__(self, *args, srid=4326, **kwargs):
+    def __init__(self, *args, srid=4326, coordinate_type=None, **kwargs):
         self.srid = srid
         self.lon = None
         self.lat = None
+        self.coordinate_type = coordinate_type
         super(PointField, self).__init__(*args, **kwargs)
 
     def _getpoint(self, lat, lon):
