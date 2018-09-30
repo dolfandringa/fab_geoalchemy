@@ -1,3 +1,7 @@
+# THIS PACKAGE HAS BEEN DEPRECATED.
+
+In order to use the proper flask appbuilder addon infrastructure, this package has been deprecated in favor of flask-addon-geoalchemy. This package won't be updated.
+
 # fab_geoalchemy
 Implementation of GeoAlchemy fields for Flask Appbuilder.
 

@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from os import path
 import codecs
-import fab_geoalchemy
 
 here = path.abspath(path.dirname(__file__))
 
@@ -17,7 +16,7 @@ extras = {
 
 setup(
     name="fab_geoalchemy",
-    version=fab_geoalchemy.__version__,
+    version="0.1.5",
     description="Plugin to implement Geoalchemy fields in Flask Appbuilder",
     long_description=long_description,
     url="https://github.com/dolfandringa/fab_geoalchemy",

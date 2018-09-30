@@ -2,7 +2,6 @@ from wtforms.widgets import Input
 from markupsafe import Markup
 import logging
 from copy import deepcopy
-from wtforms.utils import unset_value
 
 log = logging.getLogger(__name__)
 
