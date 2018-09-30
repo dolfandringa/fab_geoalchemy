@@ -16,7 +16,7 @@ extras = {
 
 setup(
     name="fab_geoalchemy",
-    version="0.1.5",
+    version="0.1.6",
     description="Plugin to implement Geoalchemy fields in Flask Appbuilder",
     long_description=long_description,
     url="https://github.com/dolfandringa/fab_geoalchemy",

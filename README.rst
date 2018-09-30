@@ -1,4 +1,9 @@
 
+THIS PACKAGE HAS BEEN DEPRECATED.
+=================================
+
+In order to use the proper flask appbuilder addon infrastructure, this package has been deprecated in favor of flask-addon-geoalchemy. This package won't be updated.
+
 fab_geoalchemy
 ==============
 
@@ -10,7 +15,7 @@ The goal is to add a leaflet widget and add support for line and polygon as well
 Installation
 ------------
 
-Download the code and execute ``pip install`` in the source folder.
+Run ``pip install fab-geoalchemy``.
 
 Usage
 -----
